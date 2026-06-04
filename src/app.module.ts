@@ -9,7 +9,11 @@ import { TransferModule } from './modules/transfer/transfer.module';
 import { UserModule } from './modules/user/user.module';
 import { AccountModule } from './modules/account/account.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
+<<<<<<< HEAD
 import { NotificationsModule } from './modules/notifications/notifications.module';
+=======
+import { StudentModule } from './modules/student/student.module';
+>>>>>>> 61a2fd8 (Actualizacion ejemplos swagger)
 import { MailModule } from './mail/mail.module';
 
 @Module({
@@ -27,6 +31,7 @@ import { MailModule } from './mail/mail.module';
     AccountModule,
     TransactionModule,
     NotificationsModule,
+    StudentModule,
     MailModule,
   ],
   controllers: [AppController],
