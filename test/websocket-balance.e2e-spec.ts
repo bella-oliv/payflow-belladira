@@ -193,8 +193,10 @@ describe('RF-02 WebSocket Balance Update (e2e)', () => {
                   try {
                     clearTimeout(timeout);
 
-                    expect(data).toHaveProperty('saldo');
+                    expect(data).toHaveProperty('balance');
                     expect(data).toHaveProperty('accountId');
+                    expect(typeof data.balance).toBe('number');
+                    expect(typeof data.accountId).toBe('number');
 
                     cleanupSocket();
 
@@ -302,8 +304,10 @@ describe('RF-02 WebSocket Balance Update (e2e)', () => {
                   try {
                     clearTimeout(timeout);
 
-                    expect(data).toHaveProperty('saldo');
+                    expect(data).toHaveProperty('balance');
                     expect(data).toHaveProperty('accountId');
+                    expect(typeof data.balance).toBe('number');
+                    expect(typeof data.accountId).toBe('number');
 
                     cleanupSocket();
 

@@ -65,7 +65,7 @@ export class NotificationListener {
 
         // Actualizar saldo del Emisor
         if (event.senderBalance !== undefined) {
-          await this.notificationsService.notifyRealtimeBalanceUpdate(event.userId, event.senderBalance);
+          await this.notificationsService.notifyRealtimeBalanceUpdate(event.userId, event.senderBalance, event.fromAccountId);
         }
 
         // Notificación para el Receptor
@@ -86,7 +86,7 @@ export class NotificationListener {
 
           // Actualizar saldo del Receptor
           if (event.receiverBalance !== undefined) {
-            await this.notificationsService.notifyRealtimeBalanceUpdate(event.toUserId, event.receiverBalance);
+            await this.notificationsService.notifyRealtimeBalanceUpdate(event.toUserId, event.receiverBalance, event.toAccountId);
           }
         }
 
@@ -103,7 +103,7 @@ export class NotificationListener {
         });
 
         if (event.senderBalance !== undefined) {
-          await this.notificationsService.notifyRealtimeBalanceUpdate(event.userId, event.senderBalance);
+          await this.notificationsService.notifyRealtimeBalanceUpdate(event.userId, event.senderBalance, event.toAccountId);
         }
 
       } else if (event.operationType === OperationType.WITHDRAW) {
@@ -119,7 +119,7 @@ export class NotificationListener {
         });
 
         if (event.senderBalance !== undefined) {
-          await this.notificationsService.notifyRealtimeBalanceUpdate(event.userId, event.senderBalance);
+          await this.notificationsService.notifyRealtimeBalanceUpdate(event.userId, event.senderBalance, event.fromAccountId);
         }
       }
 

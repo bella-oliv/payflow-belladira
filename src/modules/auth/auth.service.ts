@@ -66,7 +66,7 @@ export class AuthService {
 
       return {
         user: userWithoutPassword,
-        access_token: await this.jwtService.signAsync(payload),
+        access_token: await this.jwtService.signAsync(payload, { expiresIn: '1h' }),
       };
     } catch (error: any) {
       await queryRunner.rollbackTransaction();
@@ -94,7 +94,7 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, role: user.role };
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(payload, { expiresIn: '1h' }),
     };
   }
 }

@@ -75,7 +75,9 @@ export class NotificationsService {
             this.gateway.notifyTransferSent(userId, {
               transactionId: payload.transactionId || 0,
               amount: payload.amount,
-              toEmail: payload.partnerEmail || 'usuario destinatario',
+              status: payload.status,
+              type: payload.type,
+              toAccountId: payload.toAccountId || 0,
               newBalance: payload.newBalance !== undefined ? payload.newBalance : 0,
               timestamp: payload.created_at || new Date(),
             });
@@ -83,13 +85,17 @@ export class NotificationsService {
             this.gateway.notifyTransferReceived(userId, {
               transactionId: payload.transactionId || 0,
               amount: payload.amount,
-              fromEmail: payload.partnerEmail || 'usuario remitente',
+              status: payload.status,
+              type: payload.type,
+              fromAccountId: payload.fromAccountId || 0,
               newBalance: payload.newBalance !== undefined ? payload.newBalance : 0,
               timestamp: payload.created_at || new Date(),
             });
           }
         } else if (payload.type === 'DEPOSIT') {
           this.gateway.sendNotificationToUser(userId, 'deposit_received', {
+            type: payload.type,
+            status: payload.status,
             message: 'Depósito recibido exitosamente',
             transactionId: payload.transactionId,
             amount: payload.amount,
@@ -98,6 +104,8 @@ export class NotificationsService {
           });
         } else if (payload.type === 'WITHDRAW') {
           this.gateway.sendNotificationToUser(userId, 'withdraw_completed', {
+            type: payload.type,
+            status: payload.status,
             message: 'Retiro procesado exitosamente',
             transactionId: payload.transactionId,
             amount: payload.amount,
@@ -116,10 +124,12 @@ export class NotificationsService {
     }
   }
 
-  async notifyRealtimeBalanceUpdate(userId: number, newBalance: number) {
+  async notifyRealtimeBalanceUpdate(userId: number, newBalance: number, accountId?: number) {
     if (this.isConnected(userId)) {
       this.gateway.sendNotificationToUser(userId, 'balance.updated', {
         balance: newBalance,
+        accountId: accountId || 0,
+        timestamp: new Date(),
       });
     }
   }
@@ -164,18 +174,22 @@ export class NotificationsService {
           typeStr = payload.type;
       }
 
-      await this.mailService.sendTransactionEmail(user.email, subject, {
-        transactionId: payload.transactionId || 0,
-        type: typeStr,
-        amount: payload.amount,
-        status: payload.status,
-        timestamp: payload.created_at || new Date(),
-      });
-
-      this.logger.log(`✉️ Correo enviado al usuario ${userId}`);
+      try {
+        await this.mailService.sendTransactionEmail(user.email, subject, {
+          transactionId: payload.transactionId || 0,
+          type: typeStr,
+          amount: payload.amount,
+          status: payload.status,
+          timestamp: payload.created_at || new Date(),
+        });
+        this.logger.log(`✉️ Correo enviado al usuario ${userId}`);
+      } catch (mailError: any) {
+        const mailErrorMsg = mailError instanceof Error ? mailError.message : 'Error desconocido';
+        this.logger.debug(`⚠️ No se pudo enviar correo al usuario ${userId}: ${mailErrorMsg}. Continuando sin correo.`);
+      }
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-      this.logger.error(` Error al enviar correo al usuario ${userId}: ${errorMessage}`);
+      this.logger.error(` Error en sendEmailNotificationAsync: ${errorMessage}`);
     }
   }
 

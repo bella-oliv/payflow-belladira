@@ -42,6 +42,14 @@ export class TransferService {
       fromAccount = await this.accountsService.findAccountByUserId(fromId);
       toAccount = await this.accountsService.findAccountById(toId);
 
+      if (!fromAccount) {
+        throw new BadRequestException('Cuenta origen no encontrada.');
+      }
+
+      if (!toAccount) {
+        throw new BadRequestException('Cuenta destino no encontrada.');
+      }
+
       if (!fromAccount.user || fromAccount.user.id !== fromId) {
         throw new ForbiddenException('No tiene permiso sobre la cuenta origen.');
       }

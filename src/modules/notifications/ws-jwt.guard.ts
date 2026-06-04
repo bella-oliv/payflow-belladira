@@ -48,8 +48,14 @@ canActivate(context: ExecutionContext): boolean {
 
     this.logger.debug('JWT DECODED: ' + JSON.stringify(decoded));
 
+    if (!decoded.sub) {
+      this.logger.warn('JWT sin campo sub (userId)');
+      client.disconnect(true);
+      return false;
+    }
+
     client.data.user = decoded;
-    client.data.userId = decoded.id;
+    client.data.userId = decoded.sub;
     client.data.email = decoded.email;
 
     this.logger.debug('USER ID: ' + client.data.userId);
